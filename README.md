@@ -1,68 +1,271 @@
-# CodeIgniter 4 Application Starter
+# Blog Application
 
-## What is CodeIgniter?
+A full-featured blog application built with CodeIgniter 4, featuring blog post management, commenting system, and an admin panel.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Project Overview
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+This is a blog application that allows users to:
+- **View blog posts** on the public homepage
+- **Read individual blog posts** with detailed content
+- **Add comments** to blog posts with name and email validation
+- **Admin panel** for creating, editing, and deleting blog posts
+- **Multiple post management interfaces** for different use cases
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+### Key Features
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- 🔐 **Blog Post Management** - Full CRUD operations for blog posts
+- 💬 **Commenting System** - Users can add comments to blog posts
+- 👤 **Author Attribution** - Each blog post has an associated author
+- 📝 **Content Validation** - Form validation for posts and comments
+- 🎨 **Responsive Views** - Organized view structure for home and admin areas
+- 🗄️ **Database Migrations** - Automated database schema management
 
-## Installation & updates
+### Technology Stack
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+- **Framework**: CodeIgniter 4
+- **PHP Version**: 8.1 or higher
+- **Database**: MySQL/MariaDB
+- **Backend**: MVC architecture with Models, Controllers, and Views
+- **Testing**: PHPUnit for unit testing
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## Database Schema
 
-## Setup
+The application uses two main tables:
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+1. **blog_posts**
+   - id (Primary Key)
+   - title (VARCHAR 255)
+   - content (TEXT)
+   - author (VARCHAR 100)
+   - created_at (DATETIME)
+   - updated_at (DATETIME)
 
-## Important Change with index.php
+2. **comments**
+   - id (Primary Key)
+   - post_id (Foreign Key → blog_posts.id)
+   - name (VARCHAR 100)
+   - email (VARCHAR 100)
+   - comment (TEXT)
+   - created_at (DATETIME)
+   - updated_at (DATETIME)
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+## Setup Instructions
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+Follow these steps to set up the project locally:
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### Prerequisites
 
-## Repository Management
+- PHP 8.1 or higher
+- Composer
+- MySQL or MariaDB
+- Web server (Apache/Nginx) or PHP built-in server
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+**Required PHP Extensions:**
+- intl
+- mbstring
+- json
+- mysqlnd (for MySQL)
+- libcurl
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+### Step 1: Clone the Repository
 
-## Server Requirements
+```bash
+git clone <repository-url>
+cd blogapplication
+```
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+### Step 2: Install Dependencies
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+```bash
+composer install
+```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+### Step 3: Configure Environment
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+1. Copy the `env` file to `.env`:
+   ```bash
+   copy env .env
+   ```
+   (On Linux/Mac: `cp env .env`)
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+2. Edit `.env` file and configure the following:
+
+   **Database Configuration:**
+   ```ini
+   database.default.hostname = localhost
+   database.default.database = blogapp
+   database.default.username = root
+   database.default.password = your_password
+   database.default.DBDriver = MySQLi
+   database.default.port = 3306
+   ```
+
+   **Base URL:**
+   ```ini
+   app.baseURL = 'http://localhost:8080/'
+   ```
+
+   **Environment:**
+   ```ini
+   CI_ENVIRONMENT = development
+   ```
+
+### Step 4: Create Database
+
+Create a MySQL database named `blogapp`:
+
+```sql
+CREATE DATABASE blogapp CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+```
+
+### Step 5: Run Migrations
+
+Run the database migrations to create the required tables:
+
+```bash
+php spark migrate
+```
+
+This will create the `blog_posts` and `comments` tables.
+
+### Step 6: File Permissions (Linux/Mac)
+
+Make the `writable` directory writable:
+
+```bash
+chmod -R 777 writable/
+```
+
+On Windows, ensure the `writable` folder has write permissions.
+
+## Running the Project
+
+### Option 1: Using PHP Built-in Server (Recommended for Development)
+
+```bash
+php spark serve
+```
+
+The application will be available at: `http://localhost:8080`
+
+### Option 2: Using XAMPP/WAMP
+
+1. Configure your virtual host to point to the `public` folder
+2. Or access via: `http://localhost/blogapplication/public/`
+
+### Option 3: Using Apache/Nginx
+
+Configure your web server to point the document root to the `public` folder:
+
+**Apache Virtual Host Example:**
+```apache
+<VirtualHost *:80>
+    ServerName blogapp.local
+    DocumentRoot "d:/GitHub/blogapplication/public"
+    
+    <Directory "d:/GitHub/blogapplication/public">
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+
+**Nginx Configuration Example:**
+```nginx
+server {
+    listen 80;
+    server_name blogapp.local;
+    root /path/to/blogapplication/public;
+    
+    index index.php index.html;
+    
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    
+    location ~ \.php$ {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+    }
+}
+```
+
+## Application Routes
+
+### Public Routes
+- `GET /` - Homepage (list all blog posts)
+- `GET /post/{id}` - View single blog post with comments
+- `POST /post/comment` - Add a comment to a blog post
+
+### Post Management Routes
+- `GET /posts` - List all posts
+- `GET /posts/create` - Create new post form
+- `POST /posts/store` - Store new post
+- `GET /posts/edit/{id}` - Edit post form
+- `POST /posts/update/{id}` - Update post
+- `POST /posts/delete/{id}` - Delete post
+
+### Admin Routes
+- `GET /admin/blog-posts` - Admin blog posts list
+- `GET /admin/blog-posts/create` - Create blog post form
+- `POST /admin/blog-posts/store` - Store blog post
+- `GET /admin/blog-posts/edit/{id}` - Edit blog post form
+- `POST /admin/blog-posts/update/{id}` - Update blog post
+- `POST /admin/blog-posts/delete/{id}` - Delete blog post
+
+## Testing
+
+Run the test suite using PHPUnit:
+
+```bash
+composer test
+```
+
+Or directly:
+
+```bash
+vendor\bin\phpunit
+```
+
+## Project Structure
+
+```
+blogapplication/
+├── app/
+│   ├── Controllers/
+│   │   ├── BaseController.php
+│   │   ├── HomeController.php      # Public blog views
+│   │   ├── PostController.php      # Post management
+│   │   └── Admin/
+│   │       └── BlogPostController.php  # Admin blog management
+│   ├── Models/
+│   │   ├── BlogPostModel.php       # Blog posts model
+│   │   ├── CommentModel.php        # Comments model
+│   │   └── PostModel.php           # Alternative posts model
+│   ├── Views/
+│   │   ├── home/                   # Public views
+│   │   │   ├── index.php           # Homepage
+│   │   │   └── show.php            # Single post view
+│   │   ├── posts/                  # Post management views
+│   │   │   ├── index.php
+│   │   │   ├── create.php
+│   │   │   └── edit.php
+│   │   └── admin/                  # Admin views
+│   │       └── blog_posts/
+│   ├── Database/
+│   │   └── Migrations/             # Database migrations
+│   └── Config/                     # Configuration files
+├── public/                         # Public web root
+│   └── index.php                   # Application entry point
+├── writable/                       # Writable directories
+│   ├── cache/
+│   ├── logs/
+│   └── uploads/
+├── vendor/                         # Composer dependencies
+└── composer.json
+```
+
+## Credits
+
+Built with [CodeIgniter 4](https://codeigniter.com) - A PHP full-stack web framework that is light, fast, flexible and secure.
